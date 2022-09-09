@@ -16,13 +16,15 @@
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE /* To get defns of NI_MAXSERV and NI_MAXHOST */
 #endif
+#ifndef __APPLE__
+#include <linux/if_link.h>
+#include <netpacket/packet.h>
+#endif
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <net/if.h>
 #include <netdb.h>
 #include <ifaddrs.h>
-#include <linux/if_link.h>
-#include <netpacket/packet.h>
 #include <stdio.h>
 #include <unordered_map>
 #include <string.h>
@@ -75,10 +77,16 @@ FUNCTION_RETURN getAdapterInfos(vector<OsAdapterInfo> &adapterInfos) {
 		family = ifa->ifa_addr->sa_family;
 		/* Display interface name and family (including symbolic
 		 form of the latter for the common families) */
+#ifdef __APPLE__
+		LOG_DEBUG("%-8s %s (%d)\n", ifa->ifa_name,
+				  (family == AF_INET) ? "AF_INET" : (family == AF_INET6) ? "AF_INET6" : "???",
+				  family);
+#else
 		LOG_DEBUG("%-8s %s (%d)\n", ifa->ifa_name,
 				  (family == AF_PACKET) ? "AF_PACKET"
-										: (family == AF_INET) ? "AF_INET" : (family == AF_INET6) ? "AF_INET6" : "???",
+				  : (family == AF_INET) ? "AF_INET" : (family == AF_INET6) ? "AF_INET6" : "???",
 				  family);
+#endif
 		/* For an AF_INET* interface address, display the address
 		 * || family == AF_INET6*/
 		if (family == AF_INET) {
@@ -89,6 +97,15 @@ FUNCTION_RETURN getAdapterInfos(vector<OsAdapterInfo> &adapterInfos) {
 			currentAdapter->ipv4_address[2] = (iaddr & 0x00ff0000) >> 16;
 			currentAdapter->ipv4_address[3] = (iaddr & 0xff000000) >> 24;
 
+#ifdef __APPLE__
+		} else {
+			for (auto i = 0; i < 6; i++) {
+				currentAdapter->mac_address[i] = 0xAB;
+				LOG_DEBUG("%02x:", 0xAB);
+			}
+			LOG_DEBUG("\t %s\n", "???");
+		}
+#else
 		} else if (family == AF_PACKET && ifa->ifa_data != NULL) {
 			struct sockaddr_ll *s1 = (struct sockaddr_ll *)ifa->ifa_addr;
 			int i;
@@ -98,6 +115,7 @@ FUNCTION_RETURN getAdapterInfos(vector<OsAdapterInfo> &adapterInfos) {
 			}
 			LOG_DEBUG("\t %s\n", ifa->ifa_name);
 		}
+#endif
 	}
 	freeifaddrs(ifaddr);
 
