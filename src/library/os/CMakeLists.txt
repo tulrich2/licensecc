@@ -1,14 +1,23 @@
 IF(UNIX OR OPENSSL_FOUND)
-	IF(UNIX)
+	IF(APPLE)
+		add_library(os OBJECT
+			  openssl/signature_verifier.cpp
+			  execution_environment_common.cpp
+			  linux/execution_environment.cpp
+			  macos_m1/cpu_info.cpp
+			  macos_m1/dmi_info.cpp
+			  linux/network.cpp
+			  linux/os_linux.cpp)
+	ELSEIF(UNIX)
 		add_library(os OBJECT
 		    openssl/signature_verifier.cpp
-            execution_environment_common.cpp
+			  execution_environment_common.cpp
 		    linux/execution_environment.cpp
 		    linux/cpu_info.cpp
 		    linux/dmi_info.cpp
 		    linux/network.cpp
 		    linux/os_linux.cpp) 
-	ELSE(UNIX)
+	ELSE()
 	    #windows and openssl
   	    add_library(os OBJECT 
   	    windows/cpu_info.cpp
@@ -18,7 +27,7 @@ IF(UNIX OR OPENSSL_FOUND)
         windows/execution_environment.cpp
   	    windows/os_win.cpp
   	    windows/network.cpp)
-	ENDIF(UNIX)
+	ENDIF()
 	target_include_directories(os PUBLIC ${OPENSSL_INCLUDE_DIR})
 ELSE(UNIX OR OPENSSL_FOUND)
 #windows no openssl

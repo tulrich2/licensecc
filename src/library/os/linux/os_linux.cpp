@@ -14,11 +14,16 @@
 #include "../../base/logger.h"
 #include "../../base/string_utils.h"
 
+#ifdef __APPLE__
+#include <unistd.h>
+#include <mach-o/dyld.h>
+#else
 #include <mntent.h>
+#include <valgrind/memcheck.h>
+#endif
 #include <dirent.h>
 #include <sys/utsname.h>
 #ifndef NDEBUG
-#include <valgrind/memcheck.h>
 #endif
 
 //#ifdef USE_DISK_MODEL
@@ -189,6 +194,9 @@ static void read_disk_labels(std::vector<DiskInfo> &disk_infos) {
 
 FUNCTION_RETURN getDiskInfos_dev(std::vector<DiskInfo> &disk_infos,
 								 std::unordered_map<std::string, int> &disk_by_uuid) {
+#ifdef __APPLE__
+	return FUNC_RET_NOT_AVAIL;
+#else
 	struct dirent *dir = NULL;
 	struct stat sym_stat;
 	FUNCTION_RETURN result;
@@ -248,6 +256,7 @@ FUNCTION_RETURN getDiskInfos_dev(std::vector<DiskInfo> &disk_infos,
 	result = disk_infos.size() > 0 ? FUNCTION_RETURN::FUNC_RET_OK : FUNCTION_RETURN::FUNC_RET_NOT_AVAIL;
 	read_disk_labels(disk_infos);
 	return result;
+#endif
 }
 
 /**
@@ -257,6 +266,7 @@ FUNCTION_RETURN getDiskInfos_dev(std::vector<DiskInfo> &disk_infos,
  * @param diskInfos
  */
 static void set_preferred_disks(std::vector<DiskInfo> &diskInfos, std::unordered_map<std::string, int> &disk_by_uuid) {
+#ifndef __APPLE__
 	FILE *fstabFile = setmntent("/etc/fstab", "r");
 	if (fstabFile == nullptr) {
 		LOG_DEBUG("/etc/fstab not accessible");
@@ -310,6 +320,7 @@ static void set_preferred_disks(std::vector<DiskInfo> &diskInfos, std::unordered
 	}
 	endmntent(fstabFile);
 	return;
+#endif
 }
 
 /**
@@ -361,6 +372,16 @@ FUNCTION_RETURN getModuleName(char buffer[MAX_PATH]) {
 	FUNCTION_RETURN result;
 	char path[MAX_PATH] = {0};
 	char proc_path[MAX_PATH], pidStr[64];
+
+#ifdef __APPLE__
+	auto buf_size = (uint32_t)MAX_PATH;
+	if (_NSGetExecutablePath(proc_path, &buf_size)) {
+		return FUNC_RET_ERROR;
+	}
+	
+	auto resolved_path = realpath(proc_path, path);
+	if (!resolved_path) {
+#else
 	pid_t pid = getpid();
 	sprintf(pidStr, "%d", pid);
 	strcpy(proc_path, "/proc/");
@@ -369,9 +390,10 @@ FUNCTION_RETURN getModuleName(char buffer[MAX_PATH]) {
 
 	int ch = readlink(proc_path, path, MAX_PATH - 1);
 	if (ch > MAX_PATH || ch < 0) {
+#endif
 		result = FUNC_RET_ERROR;
 	} else {
-		mstrlcpy(buffer, path, ch + 1);
+		mstrlcpy(buffer, path, MAX_PATH);
 		result = FUNC_RET_OK;
 	}
 	return result;

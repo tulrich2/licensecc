@@ -39,3 +39,7 @@ projects/*
 /.venv/
 /Pipfile
 /.pydevproject
+
+.idea
+bin
+lib
