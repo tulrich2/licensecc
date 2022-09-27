@@ -1,6 +1,6 @@
 include(ExternalProject)
 
-if (BOOST_INCLUDE_DIR STREQUAL "" AND BOOST_LIB_DIR STREQUAL "")
+if (NOT BOOST_INCLUDE_DIR AND NOT BOOST_LIB_DIR)
     set(BOOST_ROOT_DIR "${CMAKE_SOURCE_DIR}/3rdParty/boost/src")
     set(BOOST_SRC_DIR "${BOOST_ROOT_DIR}/install_boost")
 
@@ -15,4 +15,6 @@ if (BOOST_INCLUDE_DIR STREQUAL "" AND BOOST_LIB_DIR STREQUAL "")
 
     set(BOOST_INCLUDE_DIR ${BOOST_SRC_DIR})
     set(BOOST_LIB_DIR "${BOOST_ROOT_DIR}/install_boost-build")
+else ()
+    add_custom_target(install_boost)
 endif ()
