@@ -19,6 +19,7 @@ link_directories(${OPENSSL_LIB_DIR})
 include(install/install_boost.cmake)
 include_directories(${BOOST_INCLUDE_DIR})
 link_directories(${BOOST_LIB_DIR})
+include(install/install_valgrind.cmake)
 
 if (NOT LCC_PROJECTS_BASE_DIR)
 	set(LCC_PROJECTS_BASE_DIR "${CMAKE_SOURCE_DIR}/projects")
@@ -51,4 +52,4 @@ include_directories(
 add_subdirectory(src)
 add_subdirectory(extern/license-generator)
 
-add_custom_target(environment DEPENDS install_boost install_openssl)
+add_custom_target(environment DEPENDS install_boost install_openssl install_valgrind)
