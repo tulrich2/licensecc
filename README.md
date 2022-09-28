@@ -32,6 +32,11 @@ git clone --recursive https://github.com/tulrich2/licensecc.git
 cmake -S . -B build
 ```
 
+You can also specify the name of the software you want to generate and validate licenses for:
+```bash
+cmake -S . -B build -DLCC_PROJECT_NAME=<software_name>
+```
+
 3. Build the license generator and the C++ library
 ```bash
 cmake --build build --target environment lccgen licensecc_static -- -j <num_threads>

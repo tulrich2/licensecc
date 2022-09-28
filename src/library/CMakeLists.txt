@@ -6,7 +6,6 @@ add_library(licensecc_static STATIC
 )
 
 target_link_libraries(licensecc_static PUBLIC ${OPENSSL_LIB_DIR}/libcrypto.a base os locate hw_identifier)
-add_dependencies(licensecc_static project_initialize)
 
 add_subdirectory("base")
 add_subdirectory("os")

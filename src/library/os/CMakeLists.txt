@@ -19,3 +19,4 @@ else ()
 		linux/os_linux.cpp
   )
 endif ()
+add_dependencies(os project_initialize)
