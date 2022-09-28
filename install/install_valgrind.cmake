@@ -11,9 +11,10 @@ else ()
             URL https://sourceware.org/pub/valgrind/valgrind-3.19.0.tar.bz2
             URL_MD5 4687a4990585a038c52f842448ef4e63
 
-            CONFIGURE_COMMAND cd ${VALGRIND_SRC_DIR} && ./autogen.sh && ./configure "--prefix=${VALGRIND_ROOT_DIR}/src/install_valgrind-build"
+            CONFIGURE_COMMAND cd ${VALGRIND_SRC_DIR} && ./autogen.sh && ./configure "--prefix=${VALGRIND_SRC_DIR}-build"
             BUILD_COMMAND cd ${VALGRIND_SRC_DIR} && make && make install
             INSTALL_COMMAND ""
             TEST_COMMAND ""
             )
+    set(VALGRIND_INCLUDE_DIR ${VALGRIND_SRC_DIR}-build/include)
 endif ()

@@ -20,6 +20,7 @@ include(install/install_boost.cmake)
 include_directories(${BOOST_INCLUDE_DIR})
 link_directories(${BOOST_LIB_DIR})
 include(install/install_valgrind.cmake)
+include_directories(${VALGRIND_INCLUDE_DIR})
 
 if (NOT LCC_PROJECTS_BASE_DIR)
 	set(LCC_PROJECTS_BASE_DIR "${CMAKE_SOURCE_DIR}/projects")
