@@ -5,7 +5,8 @@ add_library(licensecc_static STATIC
     ini/ConvertUTF.cpp
 )
 
-target_link_libraries(licensecc_static PUBLIC libcrypto.a base os locate hw_identifier)
+target_link_libraries(licensecc_static PUBLIC ${OPENSSL_LIB_DIR}/libcrypto.a base os locate hw_identifier)
+add_dependencies(licensecc_static project_initialize)
 
 add_subdirectory("base")
 add_subdirectory("os")
