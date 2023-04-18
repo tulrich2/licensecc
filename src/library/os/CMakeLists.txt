@@ -1,4 +1,4 @@
-if (APPLE)
+if (CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "aarch64")
 	add_library(os STATIC
 		openssl/signature_verifier.cpp
 		execution_environment_common.cpp

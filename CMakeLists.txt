@@ -13,14 +13,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
-include(install/install_openssl.cmake)
-include_directories(${OPENSSL_INCLUDE_DIR})
-link_directories(${OPENSSL_LIB_DIR})
-include(install/install_boost.cmake)
-include_directories(${BOOST_INCLUDE_DIR})
-link_directories(${BOOST_LIB_DIR})
-include(install/install_valgrind.cmake)
-include_directories(${VALGRIND_INCLUDE_DIR})
+find_package(OpenSSL COMPONENTS Crypto QUIET)
+if (NOT OPENSSL_FOUND)
+	message(FATAL_ERROR "Could not find OpenSSL package")
+endif ()
 
 if (NOT LCC_PROJECTS_BASE_DIR)
 	set(LCC_PROJECTS_BASE_DIR "${CMAKE_SOURCE_DIR}/projects")
@@ -52,5 +48,3 @@ include_directories(
 
 add_subdirectory(src)
 add_subdirectory(extern/license-generator)
-
-add_custom_target(environment DEPENDS install_boost install_openssl install_valgrind)
