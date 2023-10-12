@@ -6,7 +6,7 @@ if (NOT BOOST_INCLUDE_DIR AND NOT BOOST_LIB_DIR)
 
     ExternalProject_Add(install_boost
       PREFIX ${CMAKE_SOURCE_DIR}/3rdParty/boost
-      URL https://boostorg.jfrog.io/artifactory/main/release/1.78.0/source/boost_1_78_0.tar.gz
+      URL https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.tar.gz
 
       CONFIGURE_COMMAND ""
       BUILD_COMMAND cd "${BOOST_SRC_DIR}" && sh bootstrap.sh
