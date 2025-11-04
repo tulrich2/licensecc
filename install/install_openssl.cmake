@@ -5,7 +5,7 @@ ExternalProject_Add(install_openssl
   PREFIX ${CMAKE_SOURCE_DIR}/3rdParty/openssl
   GIT_REPOSITORY https://github.com/openssl/openssl
   GIT_SHALLOW TRUE
-  GIT_TAG openssl-3.0.5
+  GIT_TAG openssl-3.6.0
   
   CONFIGURE_COMMAND ../install_openssl/Configure
   BUILD_COMMAND make
